@@ -7,3 +7,8 @@ DPAPI to decrypt chrome's passwords
 .. 
 
 וגם קצת ליואב
+
+
+.. 
+
+טוב גם לפרשטנד 
