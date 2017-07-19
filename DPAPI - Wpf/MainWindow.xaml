@@ -8,8 +8,9 @@
         Title="MainWindow" Height="550" Width="1200">
     <Grid>
         <Button x:Name="BtnGetData" Content="Get Data" HorizontalAlignment="Left" VerticalAlignment="Top" Width="147" Margin="49,45,0,0" Height="90" Click="BtnGetData_Click"/>
-        <DataGrid x:Name="dataGridView1" HorizontalAlignment="Left" Height="348" VerticalAlignment="Top" Width="1107" Margin="49,140,0,0"/>
+        <DataGrid x:Name="dataGridView1" HorizontalAlignment="Left" Height="348" VerticalAlignment="Top" Width="1107" Margin="49,140,0,0" LoadingRow="dataGridView1_LoadingRow"/>
         <Button x:Name="btnGetPasswords" Content="Get Passwords" HorizontalAlignment="Left" VerticalAlignment="Top" Width="147" Margin="986,50,0,0" Height="90" Click="btnGetPasswords_Click"/>
+        <Button x:Name="btnOpenWindow" Content="Open Window&#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Height="76" Margin="461,45,0,0" Click="btnOpenWindow_Click"/>
 
     </Grid>
 </Window>

