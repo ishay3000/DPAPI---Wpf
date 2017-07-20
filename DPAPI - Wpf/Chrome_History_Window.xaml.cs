@@ -151,6 +151,7 @@ namespace DPAPI___Wpf
             {
                 MessageBox.Show(ex.ToString());
             }
+            #region comments
             //try
             //{
             //    await Dispatcher.Invoke(async () =>
@@ -163,26 +164,28 @@ namespace DPAPI___Wpf
             //{
             //    MessageBox.Show(ex.ToString());
             //}
-                //try
-                //{
-                //    DataTable tmpTable = null;
-                //Dispatcher.Invoke(() =>
-                //{
-                //    Parallel.ForEach(dt.AsEnumerable(), myRow =>
-                //    {
-                //            if (myRow[1].ToString().Contains(tbSearchSite.Text))
-                //            {
-                //                tmpTable = new DataTable();
-                //                tmpTable.ImportRow(myRow);
-                //            }
-                //    });
-                //    gv.ItemsSource = tmpTable.AsDataView();
-                //});
-                //}
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show(ex.ToString());
-                //}
+            //try
+            //{
+            //    DataTable tmpTable = null;
+            //Dispatcher.Invoke(() =>
+            //{
+            //    Parallel.ForEach(dt.AsEnumerable(), myRow =>
+            //    {
+            //            if (myRow[1].ToString().Contains(tbSearchSite.Text))
+            //            {
+            //                tmpTable = new DataTable();
+            //                tmpTable.ImportRow(myRow);
+            //            }
+            //    });
+            //    gv.ItemsSource = tmpTable.AsDataView();
+            //});
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.ToString());
+            //}
+            #endregion
+
         }
 
         protected async Task<DataTable> SearchDatatablEntry()
@@ -245,9 +248,14 @@ namespace DPAPI___Wpf
                 await Dispatcher.Invoke(async () =>
                  {
                      await BtnSearchMethod();
+                if (e.Key == Key.Back || e.Key == Key.Delete)
+                {
+                    await BtnSearchMethod();
+                }
                  });
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }

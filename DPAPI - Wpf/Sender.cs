@@ -54,61 +54,67 @@ namespace client
         /// <returns>A string from the server.</returns>
         public async static Task<string> send_and_get_message(string message, int time_out = 1000000000)
         {
-            return await Task.Run(() => { 
-            int tmpProggressBarPercent = 0;
-            try
+            return await Task.Run(async () =>
             {
-                TcpClient client = new TcpClient(server_ip, server_port);
-               
-                //---open the connection send the message---
-                NetworkStream nwStream = client.GetStream();
-                client.ReceiveTimeout = time_out ;
-                
-                byte[] bytesToSend = Encoding.UTF8.GetBytes(message);
-                nwStream.Write(bytesToSend, 0, bytesToSend.Length);
-
-                // ---get the message from the server----
-               
-                //A list and an array for the message's bytes.
-                List <byte> list_byte_to_read = new List<byte>();
-                byte[] bytesToRead = new byte[client.ReceiveBufferSize];
-             
-                //Gets the data in chuncks.
-                while (nwStream.Read(bytesToRead, 0, client.ReceiveBufferSize) > 0)
+                int tmpProggressBarPercent = 0;
+                try
                 {
-                    tmpProggressBarPercent = (bytesToRead.Length);
-                    int tmp = 0;
-                    foreach (byte b in bytesToRead)
+                    TcpClient client = new TcpClient(server_ip, server_port);
+
+                    //---open the connection send the message---
+                    NetworkStream nwStream = client.GetStream();
+                    client.ReceiveTimeout = time_out;
+
+                    byte[] bytesToSend = Encoding.UTF8.GetBytes(message);
+                    await nwStream.WriteAsync(bytesToSend, 0, bytesToSend.Length);
+
+                    // ---get the message from the server----
+
+                    //A list and an array for the message's bytes.
+                    List<byte> list_byte_to_read = new List<byte>();
+                    byte[] bytesToRead = new byte[client.ReceiveBufferSize];
+
+                    //Gets the data in chuncks.
+                    while (await nwStream.ReadAsync(bytesToRead, 0, client.ReceiveBufferSize) > 0)
                     {
-                        if (b != 0)
+                        tmpProggressBarPercent = (bytesToRead.Length);
+                        int tmp = 0;
+                        foreach (byte b in bytesToRead)
                         {
-                            tmp++;
+                            if (b != 0)
+                            {
+                                tmp++;
+                            }
                         }
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+
+                            {
+                                //Appends only the not-null bytes.
+                                foreach (byte b in bytesToRead)
+                                    if (b != 0)
+                                    {
+                                        list_byte_to_read.Add(b);
+                                        //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmpProggressBarPercent) * 100.0); });
+                                        Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100; ((Window1)Application.Current.MainWindow).lblProgBar.Content = ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value; });//() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100.0; });                                                                                                                                                                                                                                       //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.UpdateLayout(); });
+                                    }
+                            }
+                        });
+
+                        bytesToRead = new byte[client.ReceiveBufferSize];
                     }
-                    //Appends only the not-null bytes.
-                    foreach (byte b in bytesToRead)
-                        if (b != 0)
-                        {
-                            list_byte_to_read.Add(b);
-                            //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmpProggressBarPercent) * 100.0); });
-                            Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() => ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100));//() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100.0; });
-                            //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.UpdateLayout(); });
-                        }
-                                        
-                    bytesToRead = new byte[client.ReceiveBufferSize];
+
+                    //Converts the list of bytes to a string.
+                    string respond = Convert.ToString(JsonConvert.DeserializeObject(Encoding.UTF8.GetString(list_byte_to_read.ToArray(), 0, list_byte_to_read.Count())));
+
+                    client.Close();
+                    return respond;
+
                 }
-
-                //Converts the list of bytes to a string.
-                string respond = Convert.ToString(JsonConvert.DeserializeObject(Encoding.UTF8.GetString(list_byte_to_read.ToArray(), 0, list_byte_to_read.Count())));
-
-                client.Close();
-                return respond;
-
-            }
-            catch (Exception crap)
-            {
-                return crap.ToString();
-            }
+                catch (Exception crap)
+                {
+                    return crap.ToString();
+                }
             });
         }
 
