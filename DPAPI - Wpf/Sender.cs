@@ -121,14 +121,14 @@ namespace client
             try {
                 await Task.Run(() =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
                         while (IsComplete == false)
                         {
-                            ((Window1)Application.Current.MainWindow).myCirclBar.Dispatcher.Invoke(() =>
+                            ((Window1)System.Windows.Application.Current.MainWindow).myCirclBar.Dispatcher.Invoke(() =>
                             {
-                                ((Window1)Application.Current.MainWindow).myCirclBar.Value = progBarValue;
-                                ((Window1)Application.Current.MainWindow).myCirclBar.Text = "%" + Convert.ToString(progBarValue) + ".00";
+                                ((Window1)System.Windows.Application.Current.MainWindow).myCirclBar.Value = progBarValue;
+                                ((Window1)System.Windows.Application.Current.MainWindow).myCirclBar.Text = "%" + Convert.ToString(progBarValue) + ".00";
 
                             });
                         }
@@ -145,15 +145,15 @@ namespace client
         ///</summary>
         public async static Task UpdateProgressBar(int tmp, List<byte> list_byte_to_read)
         {
-            await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            await System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     try
                     {
 
                         //    ((Window1)Application.Current.MainWindow).myCirclBar.Value = 0;
                         //    ((Window1)Application.Current.MainWindow).myCirclBar.Text = "0";
-                        ((Window1)Application.Current.MainWindow).myCirclBar.Value = (double)((list_byte_to_read.Count / tmp)) * 100.00;//.pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100; ((Window1)Application.Current.MainWindow).lblProgBar.Content = ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value; });//() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100.0; }); //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.UpdateLayout(); });
-                        ((Window1)Application.Current.MainWindow).myCirclBar.Text = "%" + ((Window1)Application.Current.MainWindow).myCirclBar.Value.ToString(); //"%" + Convert.ToString((double)((double)((list_byte_to_read.Count / tmp)) * 100.0));
+                        ((Window1)System.Windows.Application.Current.MainWindow).myCirclBar.Value = (double)((list_byte_to_read.Count / tmp)) * 100.00;//.pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100; ((Window1)Application.Current.MainWindow).lblProgBar.Content = ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value; });//() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100.0; }); //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.UpdateLayout(); });
+                        ((Window1)System.Windows.Application.Current.MainWindow).myCirclBar.Text = "%" + ((Window1)System.Windows.Application.Current.MainWindow).myCirclBar.Value.ToString(); //"%" + Convert.ToString((double)((double)((list_byte_to_read.Count / tmp)) * 100.0));
                     }
                     catch (Exception ex)
                     {

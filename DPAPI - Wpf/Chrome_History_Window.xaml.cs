@@ -198,7 +198,7 @@ namespace DPAPI___Wpf
                         DataTable tmpTable = new DataTable();
                         tmpTable = dt.Clone();
                         DataRow dr = this.dt.NewRow();
-                        Application.Current.Dispatcher.Invoke(() =>
+                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
                         {
                             foreach (DataRow row in dt.Rows)
                             {

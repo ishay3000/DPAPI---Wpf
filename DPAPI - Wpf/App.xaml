@@ -1,4 +1,4 @@
-﻿<Application x:Class="DPAPI___Wpf.App"
+﻿<Application x:Class="DPAPI___Wpf.Application"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:DPAPI___Wpf"

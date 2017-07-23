@@ -15,6 +15,9 @@ using System.Speech;
 using System.Speech.Synthesis;
 using System.Speech.Recognition;
 using System.Threading;
+using FontAwesome.WPF;
+using FontAwesome;
+using System.Drawing;
 
 namespace DPAPI___Wpf
 {
@@ -32,13 +35,14 @@ namespace DPAPI___Wpf
 
         public Window1()
         {
+            
             myEngine = new SpeechRecognitionEngine();
-            lst.Add(new string[] { "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi" , "show me passwords", "show me history", "close history window", "close history", "close Control window", "close RDP window"});
+            lst.Add(new string[] { "tell me a joke", "thank you", "what is your name", "thank you", "AIG", "avichay is gay", "thank you, close", "thank you, close the app", "sing the aig song", "stop server", "shut down server", "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi" , "show me passwords", "show me history", "close history window", "close history", "close control window", "close rdp window", "show rdp", "start rdp", "start control window", "stop rdp", "close rdp", "cancel rdp"});
             myGrammar = new Grammar(new GrammarBuilder(lst));
             //mySpeechSynth.SelectVoice("Microsoft David Desktop");
             mySpeechSynth.SelectVoiceByHints(VoiceGender.Male, VoiceAge.Child);
             InitializeComponent();
-            mySpeechSynth.SpeakAsync("Welcome back Ishay, What would you like to do?");
+            mySpeechSynth.SpeakAsync("Welcome back Ishay. What would you like to do???");
             StartListeningForCommands();
         }
 
@@ -68,7 +72,7 @@ namespace DPAPI___Wpf
                 IsListening = true;
                 if (mySpeechSynth.State != SynthesizerState.Speaking)
                 {
-
+                    Dispatcher.Invoke(() => { tbSpoenText.AppendText(result + Environment.NewLine); });
 
                     switch (result)
                     {
@@ -80,12 +84,30 @@ namespace DPAPI___Wpf
                             await Passwords();
                             SaySomething(",Okay buddy!Showing passwords.");
                             break;
+                        case "sing the aig song":
+                            SaySomething("Avichay is, oh yeah Avichay is, oh he is very very very very GAY!!! Oh yeah!");
+                            break;
+                        case "thank you, close the app":
+                        case "close the app":
+                            //case "thank you, close":
+                            //"Shutting down the client!Thanks for using Ishay's Arti-ficial Intelligence Parental Control.");
+                            Dispatcher.Invoke(() => { SaySomething("Too-da-loo!"); Close(); });
+                            break;
                         case "check my installed voices":
                             foreach (var item in mySpeechSynth.GetInstalledVoices())
                             {
                                 string s = item.VoiceInfo.Name;//item.VoiceInfo.Description + "," + item.VoiceInfo.Gender + "," + item.VoiceInfo.Age;//, item.VoiceInfo.Gender, item.VoiceInfo.Age);
                                 SaySomething(s);
                             }
+                            break;
+                        case "tell me a joke":
+                            SaySomething("Avichay is gay. Oh... wait, you didn't ask for a fact? sorry!");
+                            break;
+                        case "thank you":
+                            SaySomething("Huh? It's nothing, honestly!");
+                            break;
+                        case "what is your name":
+                            SaySomething("DROP TABLE USERS'); -- oh, I mean, uhm... Can you try that again?");
                             break;
                         case "what is the time":
                             SaySomething("The time is " + DateTime.Now.ToLongTimeString());
@@ -101,11 +123,31 @@ namespace DPAPI___Wpf
                             await GetHistory();
                             SaySomething(",Okay buddy!Showing history!");
                             break;
+                        case "start rdp":
+                        case "show rdp":
+                        case "start control window":
+                            await OpenRDP();
+                            SaySomething("Started the rdp session.");
+                            break;
+                        case "stop rdp":
+                        case "close rdp":
+                        case "close control window":
+                            SaySomething("Closed the rdp session!");
+
+                            Dispatcher.Invoke(() => { Helper.CloseWindowOfWhichThereIsOnlyOne<Form1>(); });
+                            break;
+                        case "shut down server":
+                        case "close server":
+                        case "stop server":
+                            SaySomething("Shutting down the server! Thank you for using Ishay's Artificial Intelligence Parental Control.");
+                            await ShutDownServer();
+                            break;
                         case "close history":
                             SaySomething("Sure, closing history window.");
-                            window.Hide();
+                            Dispatcher.Invoke(() => { Helper.CloseWindowOfWhichThereIsOnlyOne<Chrome_History_Window>(); });
                             break;
                         default:
+                            SaySomething("If you've said anything,I didn't hear it.");
                             //SaySomething("Sorry? I didn't quite catch that...");
                             break;
                     }
@@ -118,7 +160,7 @@ namespace DPAPI___Wpf
             try
             {
                 mySpeechSynth.SpeakAsync(phrase);
-                IsListening = true;
+                Thread.Sleep(300);
             }
             catch(Exception ex)
             {
@@ -478,10 +520,39 @@ namespace DPAPI___Wpf
             //}
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async Task OpenRDP()
         {
-            Form1 form = new Form1();
-            form.Show();
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            Form1 form = new Form1();
+                            form.Show();
+                        });
+                    }
+                    catch(Exception ex)
+                    {
+                        System.Windows.Forms.MessageBox.Show(ex.ToString());
+                    }
+                });
+            
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //Form1 form = new Form1();
+            //form.Show();
+            try
+            {
+                await OpenRDP();
+            }
+            catch (Exception ex)
+            {
+
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
         }
 
         private async void btnOpenUrl_Click(object sender, RoutedEventArgs e)
