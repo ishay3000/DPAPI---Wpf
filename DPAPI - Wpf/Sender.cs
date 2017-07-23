@@ -19,7 +19,7 @@ namespace client
         /// <summary>
         /// The server's default ip and port.
         /// </summary>
-        private static string server_ip = "10.0.0.6";
+        private static string server_ip = "10.0.0.9"; //"79.180.152.1";//"10.0.0.9";
         private static int server_port = 8080;
         
 
@@ -47,6 +47,8 @@ namespace client
             }
         }
 
+        public static double  progBarValue { get; set; }
+        public static bool IsComplete { get; set; } = false;
         /// <summary>
         ///  Sends a text message to the server and gets a response.
         /// </summary>
@@ -67,7 +69,6 @@ namespace client
 
                     byte[] bytesToSend = Encoding.UTF8.GetBytes(message);
                     await nwStream.WriteAsync(bytesToSend, 0, bytesToSend.Length);
-
                     // ---get the message from the server----
 
                     //A list and an array for the message's bytes.
@@ -85,22 +86,18 @@ namespace client
                             {
                                 tmp++;
                             }
-                        }
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-
+                        }   
+                            //Appends only the not-null bytes.
+                            foreach (byte b in bytesToRead)
                             {
-                                //Appends only the not-null bytes.
-                                foreach (byte b in bytesToRead)
-                                    if (b != 0)
-                                    {
-                                        list_byte_to_read.Add(b);
-                                        //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmpProggressBarPercent) * 100.0); });
-                                        Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100; ((Window1)Application.Current.MainWindow).lblProgBar.Content = ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value; });//() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100.0; });                                                                                                                                                                                                                                       //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.UpdateLayout(); });
-                                    }
+                                if (b != 0)
+                                {
+                                    list_byte_to_read.Add(b);
+                                    progBarValue = (list_byte_to_read.Count / tmp) * 100.0;
+                                    //await ProgBarUpdate();
+                                }
+                                
                             }
-                        });
-
                         bytesToRead = new byte[client.ReceiveBufferSize];
                     }
 
@@ -108,6 +105,7 @@ namespace client
                     string respond = Convert.ToString(JsonConvert.DeserializeObject(Encoding.UTF8.GetString(list_byte_to_read.ToArray(), 0, list_byte_to_read.Count())));
 
                     client.Close();
+                    IsComplete = true;
                     return respond;
 
                 }
@@ -117,6 +115,56 @@ namespace client
                 }
             });
         }
+
+        public static async void ProgBarUpdate()
+        {
+            try {
+                await Task.Run(() =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        while (IsComplete == false)
+                        {
+                            ((Window1)Application.Current.MainWindow).myCirclBar.Dispatcher.Invoke(() =>
+                            {
+                                ((Window1)Application.Current.MainWindow).myCirclBar.Value = progBarValue;
+                                ((Window1)Application.Current.MainWindow).myCirclBar.Text = "%" + Convert.ToString(progBarValue) + ".00";
+
+                            });
+                        }
+                    });
+                });
+            }
+            catch(Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+            }
+        ///<summary>
+        ///Method to update the Progress bar in the Main Window, based on the percentage of bytes.
+        ///</summary>
+        public async static Task UpdateProgressBar(int tmp, List<byte> list_byte_to_read)
+        {
+            await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+
+                        //    ((Window1)Application.Current.MainWindow).myCirclBar.Value = 0;
+                        //    ((Window1)Application.Current.MainWindow).myCirclBar.Text = "0";
+                        ((Window1)Application.Current.MainWindow).myCirclBar.Value = (double)((list_byte_to_read.Count / tmp)) * 100.00;//.pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100; ((Window1)Application.Current.MainWindow).lblProgBar.Content = ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value; });//() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.Value = (double)((list_byte_to_read.Count / tmp)) * 100.0; }); //Application.Current.Dispatcher.Invoke(() => { ((Window1)Application.Current.MainWindow).pBarTransferBytes.UpdateLayout(); });
+                        ((Window1)Application.Current.MainWindow).myCirclBar.Text = "%" + ((Window1)Application.Current.MainWindow).myCirclBar.Value.ToString(); //"%" + Convert.ToString((double)((double)((list_byte_to_read.Count / tmp)) * 100.0));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                }));
+            
+            //}));
+        //});
+        }
+
 
         /// <summary>
         /// Checks if the server is up and llistening on the specific port.
