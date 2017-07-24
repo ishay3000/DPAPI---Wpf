@@ -2,11 +2,22 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DPAPI___Wpf"
         mc:Ignorable="d"
-        Title="AIWindow" Height="500" Width="900" ResizeMode="CanMinimize">
+        Title="AIWindow" Height="500" Width="900" ResizeMode="CanMinimize" Background="#FF8569A0">
     <Grid>
-        
+        <fa:ImageAwesome x:Name="myLoading" Icon="Cog" Spin="True" Height="48" Width="48" Foreground="Black" />
+        <Label Content="Ishay's voice Assistant" HorizontalAlignment="Left" Height="70" Margin="194,10,0,0" VerticalAlignment="Top" Width="518" FontWeight="Bold" FontSize="48"/>
+        <!--<Label x:Name="lblResult" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="76" Margin="83,299,0,0" VerticalAlignment="Top" Width="734" FontSize="36">
+        </Label>-->
+        <TextBlock x:Name="lblResult"  Visibility="Visible" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="115,320,116.6,10.2" FontSize="24" FontWeight="Bold" Foreground="Black" FontFamily="Segoe UI Black"></TextBlock>
+
+        <Label x:Name="lblSpokenText" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="54" Margin="315,112,0,0" VerticalAlignment="Top" Width="259" FontSize="22" FontWeight="Bold">
+            <Label.Content>
+                <AccessText TextWrapping="Wrap"></AccessText>
+            </Label.Content>
+        </Label>
     </Grid>
 </Window>
