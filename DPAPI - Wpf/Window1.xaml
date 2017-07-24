@@ -26,7 +26,7 @@
         <TextBox x:Name="tbChromeUrl" HorizontalAlignment="Left" Height="41" Margin="103,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
         <StackPanel>
             <CircularProgressBarApp:CircularProgressBar x:Name="CircularPbar" HorizontalAlignment="Left" Height="110" Margin="656,0,0,0" Width="173"/>
-            <ProgressBar x:Name="pBarTransferBytes" HorizontalAlignment="Left" Height="29" Margin="520,238,0,0" VerticalAlignment="Top" Width="130"/>
+            <ProgressBar x:Name="pBarTransferBytes" HorizontalAlignment="Left" Height="29" Margin="520,238,0,0" VerticalAlignment="Top" Width="100"/>
             <Label x:Name="lblProgBar" Content="{Binding Value, ElementName=pBarTransferBytes}" />
             <StackPanel>
                 <Grid>
@@ -40,6 +40,7 @@
                                  Style="{StaticResource CircularProgressBarStyle}" Margin="348.2,-91,0.6,-72" Grid.Column="1"/>
                 </Grid>
             </StackPanel>
+            <TextBox x:Name="lblResult" HorizontalAlignment="Left" Height="113" Margin="333,0,0,0" TextWrapping="Wrap" Width="346"/>
         </StackPanel>
     </Grid>
 </Window>

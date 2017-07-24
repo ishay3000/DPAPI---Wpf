@@ -118,6 +118,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AIWindow.xaml.cs">
+      <DependentUpon>AIWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="async.cs" />
     <Compile Include="ChromeHistoryWindowsForm.cs">
       <SubType>Form</SubType>
@@ -146,6 +149,10 @@
     <Compile Include="Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
+    <Page Include="AIWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Chrome_History_Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

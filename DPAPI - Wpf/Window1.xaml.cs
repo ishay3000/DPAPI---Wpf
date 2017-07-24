@@ -29,7 +29,7 @@ namespace DPAPI___Wpf
         SpeechSynthesizer mySpeechSynth = new SpeechSynthesizer();
         Choices lst = new Choices();
         SpeechRecognitionEngine myEngine;
-        Grammar myGrammar;
+        //Grammar myGrammar;
         bool IsListening = false;
         Chrome_History_Window window = null;
 
@@ -37,21 +37,40 @@ namespace DPAPI___Wpf
         {
             
             myEngine = new SpeechRecognitionEngine();
-            lst.Add(new string[] { "tell me a joke", "thank you", "what is your name", "thank you", "AIG", "avichay is gay", "thank you, close", "thank you, close the app", "sing the aig song", "stop server", "shut down server", "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi" , "show me passwords", "show me history", "close history window", "close history", "close control window", "close rdp window", "show rdp", "start rdp", "start control window", "stop rdp", "close rdp", "cancel rdp"});
-            myGrammar = new Grammar(new GrammarBuilder(lst));
+            string[] arr = new string[] { "hey bamb", "hey cena", "tell me a joke", "thank you", "what is your name", "thank you", "AIG", "avichay is gay", "thank you, close", "thank you, close the app", "sing the aig song", "stop server", "shut down server", "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi", "show me passwords", "show me history", "close history window", "close history", "close control window", "close rdp window", "show rdp", "start rdp", "start control window", "stop rdp", "close rdp", "cancel rdp" };
+            //myGrammar = new Grammar(new GrammarBuilder(lst//, SubsetMatchingMode.SubsequenceContentRequired);//(new GrammarBuilder(lst));
+            lst.Add(arr);
+            foreach (var item in arr)
+            {
+                GrammarBuilder gb = new GrammarBuilder(item, SubsetMatchingMode.SubsequenceContentRequired);
+                Grammar myGrammar = new Grammar(gb);
+                myGrammar.Enabled = true;
+                myEngine.LoadGrammarAsync(myGrammar);
+            }
+
             //mySpeechSynth.SelectVoice("Microsoft David Desktop");
             mySpeechSynth.SelectVoiceByHints(VoiceGender.Male, VoiceAge.Child);
             InitializeComponent();
             mySpeechSynth.SpeakAsync("Welcome back Ishay. What would you like to do???");
             StartListeningForCommands();
+
+            
         }
 
+        protected void GetRandomJoke()
+        {
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadStringCompleted += new DownloadStringCompletedEventHandler(wc_DownloadStringCompleted);
+                wc.DownloadStringAsync(new Uri(@"http://api.icndb.com/jokes/random"));
+            }
+        }
         private void StartListeningForCommands()
         {
             try
             {
                 myEngine.RequestRecognizerUpdate();
-                myEngine.LoadGrammar(myGrammar);
+                //myEngine.LoadGrammar(myGrammar);
                 //myEngine.SpeechRecognized += MyEngine_SpeechRecognizedAsync;
                 myEngine.SpeechRecognized += MyEngine_SpeechRecognized;
                 myEngine.SetInputToDefaultAudioDevice();
@@ -69,88 +88,126 @@ namespace DPAPI___Wpf
             Task.Run(async () =>
             {
                 string result = e.Result.Text;
-                IsListening = true;
-                if (mySpeechSynth.State != SynthesizerState.Speaking)
+                if (result == "hey bamb" || result == "hey cortana" || result == "hey cena")
+                {
+                    IsListening = true;
+                }
+                if (mySpeechSynth.State != SynthesizerState.Speaking && IsListening)
                 {
                     Dispatcher.Invoke(() => { tbSpoenText.AppendText(result + Environment.NewLine); });
+                    
+                        switch (result)
+                        {
+                            case "hi":
+                            case "hello":
+                                SaySomething("Hey there !");
+                                break;
+                            case "show me passwords":
+                                await Passwords();
+                                SaySomething(",Okay buddy!Showing passwords.");
+                                break;
+                            case "sing the aig song":
+                                SaySomething("Avichay is, oh yeah Avichay is, oh he is very very very very GAY!!! Oh yeah!");
+                                break;
+                            case "thank you, close the app":
+                            case "close the app":
+                                //case "thank you, close":
+                                //"Shutting down the client!Thanks for using Ishay's Arti-ficial Intelligence Parental Control.");
+                                Dispatcher.Invoke(() => { SaySomething("Too-da-loo!"); Close(); });
+                                break;
+                            case "check my installed voices":
+                                foreach (var item in mySpeechSynth.GetInstalledVoices())
+                                {
+                                    string s = item.VoiceInfo.Name;//item.VoiceInfo.Description + "," + item.VoiceInfo.Gender + "," + item.VoiceInfo.Age;//, item.VoiceInfo.Gender, item.VoiceInfo.Age);
+                                    SaySomething(s);
+                                }
+                                break;
+                            case "tell me a joke":
+                            GetRandomJoke();
+                                //SaySomething("Avichay is gay. Oh... wait, you didn't ask for a fact? sorry!");
+                                break;
+                            case "thank you":
+                                SaySomething("Huh? It's nothing, honestly!");
+                                break;
+                            case "what is your name":
+                                SaySomething("DROP TABLE USERS'); -- oh, I mean, uhm... Can you try that again?");
+                                break;
+                            case "what is the time":
+                                SaySomething("The time is " + DateTime.Now.ToLongTimeString());
+                                break;
+                            case "what is the date":
+                                SaySomething("Today's " + DateTime.Now.ToLongDateString());
+                                break;
+                            case "change voice":
+                                SaySomething("Sure, changing voice");
+                                mySpeechSynth.SelectVoice("Microsoft David Desktop");
+                                break;
+                            case "show me history":
+                                await GetHistory();
+                                SaySomething(",Okay buddy!Showing history!");
+                                break;
+                            case "start rdp":
+                            case "show rdp":
+                            case "start control window":
+                                await OpenRDP();
+                                SaySomething("Started the rdp session.");
+                                break;
+                            case "stop rdp":
+                            case "close rdp":
+                            case "close control window":
+                                SaySomething("Closed the rdp session!");
 
-                    switch (result)
-                    {
-                        case "hi":
-                        case "hello":
-                            SaySomething("Hey there !");
-                            break;
-                        case "show me passwords":
-                            await Passwords();
-                            SaySomething(",Okay buddy!Showing passwords.");
-                            break;
-                        case "sing the aig song":
-                            SaySomething("Avichay is, oh yeah Avichay is, oh he is very very very very GAY!!! Oh yeah!");
-                            break;
-                        case "thank you, close the app":
-                        case "close the app":
-                            //case "thank you, close":
-                            //"Shutting down the client!Thanks for using Ishay's Arti-ficial Intelligence Parental Control.");
-                            Dispatcher.Invoke(() => { SaySomething("Too-da-loo!"); Close(); });
-                            break;
-                        case "check my installed voices":
-                            foreach (var item in mySpeechSynth.GetInstalledVoices())
-                            {
-                                string s = item.VoiceInfo.Name;//item.VoiceInfo.Description + "," + item.VoiceInfo.Gender + "," + item.VoiceInfo.Age;//, item.VoiceInfo.Gender, item.VoiceInfo.Age);
-                                SaySomething(s);
-                            }
-                            break;
-                        case "tell me a joke":
-                            SaySomething("Avichay is gay. Oh... wait, you didn't ask for a fact? sorry!");
-                            break;
-                        case "thank you":
-                            SaySomething("Huh? It's nothing, honestly!");
-                            break;
-                        case "what is your name":
-                            SaySomething("DROP TABLE USERS'); -- oh, I mean, uhm... Can you try that again?");
-                            break;
-                        case "what is the time":
-                            SaySomething("The time is " + DateTime.Now.ToLongTimeString());
-                            break;
-                        case "what is the date":
-                            SaySomething("Today's " + DateTime.Now.ToLongDateString());
-                            break;
-                        case "change voice":
-                            SaySomething("Sure, changing voice");
-                            mySpeechSynth.SelectVoice("Microsoft David Desktop");
-                            break;
-                        case "show me history":
-                            await GetHistory();
-                            SaySomething(",Okay buddy!Showing history!");
-                            break;
-                        case "start rdp":
-                        case "show rdp":
-                        case "start control window":
-                            await OpenRDP();
-                            SaySomething("Started the rdp session.");
-                            break;
-                        case "stop rdp":
-                        case "close rdp":
-                        case "close control window":
-                            SaySomething("Closed the rdp session!");
-
-                            Dispatcher.Invoke(() => { Helper.CloseWindowOfWhichThereIsOnlyOne<Form1>(); });
-                            break;
-                        case "shut down server":
-                        case "close server":
-                        case "stop server":
-                            SaySomething("Shutting down the server! Thank you for using Ishay's Artificial Intelligence Parental Control.");
-                            await ShutDownServer();
-                            break;
-                        case "close history":
-                            SaySomething("Sure, closing history window.");
-                            Dispatcher.Invoke(() => { Helper.CloseWindowOfWhichThereIsOnlyOne<Chrome_History_Window>(); });
-                            break;
-                        default:
-                            SaySomething("If you've said anything,I didn't hear it.");
-                            //SaySomething("Sorry? I didn't quite catch that...");
-                            break;
+                                Dispatcher.Invoke(() => { Helper.CloseWindowOfWhichThereIsOnlyOne<Form1>(); });
+                                break;
+                            case "shut down server":
+                            case "close server":
+                            case "stop server":
+                                SaySomething("Shutting down the server! Thank you for using Ishay's Artificial Intelligence Parental Control.");
+                                await ShutDownServer();
+                                break;
+                            case "close history":
+                                SaySomething("Sure, closing history window.");
+                                Dispatcher.Invoke(() => { Helper.CloseWindowOfWhichThereIsOnlyOne<Chrome_History_Window>(); });
+                                break;
+                            default:
+                                //SaySomething("If you've said anything,I didn't hear it.");
+                                //SaySomething("Sorry? I didn't quite catch that...");
+                                break;
+                        }
                     }
+                
+            });
+        }
+
+        
+
+        protected void wc_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            try
+            {
+                string text = e.Result;
+                // … do something with result
+                dynamic json = JsonConvert.DeserializeObject(text);
+                string joke = (string)json.value["joke"];
+                SaySomething(joke);
+            }
+            catch(Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+        }
+
+        protected async Task<string> GetRandomJokeAsync()
+        {
+            return await Task.Run(() =>
+            {
+                using (WebClient myClient = new WebClient())
+                {
+                    Uri r = new Uri("http://api.icndb.com/jokes/random");
+                    object obj = null;
+                    myClient.DownloadStringAsync(r, obj);
+                    dynamic s = JsonConvert.DeserializeObject(obj.ToString());
+                    return s.value["joke"];
                 }
             });
         }
@@ -159,8 +216,11 @@ namespace DPAPI___Wpf
         {
             try
             {
+                Dispatcher.Invoke(() => { lblResult.Text = phrase; });
                 mySpeechSynth.SpeakAsync(phrase);
-                Thread.Sleep(300);
+                //Thread.Sleep(300);
+                IsListening = false;
+
             }
             catch(Exception ex)
             {
