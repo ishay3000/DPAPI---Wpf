@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,12 @@ namespace DPAPI___Wpf
     /// </summary>
     public partial class ChromePasswordsWindow : Window
     {
-        public ChromePasswordsWindow()
+        DataTable _dt;
+        public ChromePasswordsWindow(DataTable dt)
         {
+            _dt = dt;
             InitializeComponent();
+            gv.ItemsSource = _dt.AsDataView();
         }
     }
 }

@@ -4,20 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DPAPI___Wpf
 {
@@ -26,27 +19,29 @@ namespace DPAPI___Wpf
     /// </summary>
     public partial class AIWindow : Window
     {
+        
         SpeechSynthesizer mySpeechSynth = new SpeechSynthesizer();
         Choices lst = new Choices();
         SpeechRecognitionEngine myEngine;
         //Grammar myGrammar;
         bool IsListening = false;
         Chrome_History_Window window = null;
-
+        //https://icanhazdadjoke.com/slack
         public AIWindow()
         {
-            InitializeComponent();
-            myEngine = new SpeechRecognitionEngine();
-            string[] arr = new string[] { "hey bamb", "hey cena", " ", "tell me a joke", "thank you", "what is your name", "thank you", "AIG", "avichay is gay", "thank you, close", "thank you, close the app", "sing the aig song", "stop server", "shut down server", "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi", "show me passwords", "show me history", "close history window", "close history", "close control window", "close rdp window", "show rdp", "start rdp", "start control window", "stop rdp", "close rdp", "cancel rdp" };
-            //myGrammar = new Grammar(new GrammarBuilder(lst//, SubsetMatchingMode.SubsequenceContentRequired);//(new GrammarBuilder(lst));
-            lst.Add(arr);
-            foreach (var item in arr)
-            {
-                GrammarBuilder gb = new GrammarBuilder(item, SubsetMatchingMode.SubsequenceContentRequired);
-                Grammar myGrammar = new Grammar(gb);
-                myGrammar.Enabled = true;
-                myEngine.LoadGrammarAsync(myGrammar);
-            }
+                InitializeComponent();
+                myEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-us"));
+                string[] arr = new string[] { "show me passwords", "close passwords window", "hey bamb", "hey cena", "tell mum to go away", "tell me a joke", "thank you", "what is your name", "thank you", "AIG", "avichay is gay", "thank you, close", "thank you, close the app", "sing the aig song", "stop server", "shut down server", "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi", "show me passwords", "show me history", "close history window", "close history", "close control window", "close rdp window", "show rdp", "start rdp", "start control window", "stop rdp", "close rdp", "cancel rdp" };
+                //myGrammar = new Grammar(new GrammarBuilder(lst//, SubsetMatchingMode.SubsequenceContentRequired);//(new GrammarBuilder(lst));
+                lst.Add(arr);
+                foreach (var item in arr)
+                {
+                    GrammarBuilder gb = new GrammarBuilder(item, SubsetMatchingMode.SubsequenceContentRequired);
+                    Grammar myGrammar = new Grammar(gb);
+                    myGrammar.Enabled = true;
+                    myEngine.LoadGrammarAsync(myGrammar);
+                }
+            #region Comments
             //Choices c = new Choices(new string[] { " ", "say", "speak"});
             //SemanticResultKey comType = new SemanticResultKey("comtype", c);
             //GrammarBuilder gbl = new GrammarBuilder();
@@ -57,13 +52,18 @@ namespace DPAPI___Wpf
             //myEngine.LoadGrammar(gr);
 
             //mySpeechSynth.SelectVoice("Microsoft David Desktop");
-            mySpeechSynth.SelectVoiceByHints(VoiceGender.Male, VoiceAge.Child);
+            #endregion
+            //SaySomething(string.Empty, 1);
+            //mySpeechSynth.SelectVoiceByHints(VoiceGender.Male, VoiceAge.Child);
+            //mySpeechSynth.SelectVoiceByHints(VoiceGender.Female, VoiceAge.Teen);
+            mySpeechSynth.SelectVoice("Microsoft Hazel Desktop");
+                Dispatcher.Invoke(() => { lblResult.Text = "Welcome back, Ishay."; });
 
-            mySpeechSynth.SpeakAsync("Welcome,back,Ishay.");
-            Dispatcher.Invoke(() => { lblResult.Text = "Welcome back, Ishay."; });
+                mySpeechSynth.SpeakAsync("Welcome,back,Ishay.");
 
-            StartListeningForCommands();
-
+                //StartListeningForCommands();
+            Thread myThread = new Thread(StartListeningForCommands);
+            myThread.Start();
         }
 
         private SpeechRecognitionEngine LoadDictationGrammars()
@@ -105,7 +105,8 @@ namespace DPAPI___Wpf
                 using (WebClient wc = new WebClient())
                 {
                     wc.DownloadStringCompleted += new DownloadStringCompletedEventHandler(wc_DownloadStringCompleted);
-                    wc.DownloadStringAsync(new Uri(@"http://api.icndb.com/jokes/random"));
+                    //wc.DownloadStringAsync(new Uri(@"http://api.icndb.com/jokes/random"));
+                    wc.DownloadStringAsync(new Uri(@"https://icanhazdadjoke.com/slack"));
                 }
             }
             catch(Exception ex)
@@ -157,6 +158,9 @@ namespace DPAPI___Wpf
                         case "hello":
                             SaySomething("Hey there !");
                             break;
+                        case "close passwords window":
+                            Dispatcher.Invoke(() => { Helper.CloseWindowOfWhichThereIsOnlyOne<ChromePasswordsWindow>(); SaySomething("On it!"); });
+                            break;
                         case "show me passwords":
                             await Passwords();
                             SaySomething(",Okay buddy!Showing passwords.");
@@ -168,7 +172,7 @@ namespace DPAPI___Wpf
                         case "close the app":
                             //case "thank you, close":
                             //"Shutting down the client!Thanks for using Ishay's Arti-ficial Intelligence Parental Control.");
-                            Dispatcher.Invoke(() => { SaySomething("Too-da-loo!"); Close(); });
+                            Dispatcher.Invoke(() => { SaySomething("Too-da-loo!"); Thread.Sleep(900); Close(); });
                             break;
                         case "check my installed voices":
                             foreach (var item in mySpeechSynth.GetInstalledVoices())
@@ -196,6 +200,9 @@ namespace DPAPI___Wpf
                         case "change voice":
                             SaySomething("Sure, changing voice");
                             mySpeechSynth.SelectVoice("Microsoft David Desktop");
+                            break;
+                        case "tell mom to go away":
+                            SaySomething("Mum, go away!");
                             break;
                         case "show me history":
                             await GetHistory();
@@ -243,7 +250,8 @@ namespace DPAPI___Wpf
                 string text = e.Result;
                 // … do something with result
                 dynamic json = JsonConvert.DeserializeObject(text);
-                string joke = (string)json.value["joke"];
+                var r = json["attachments"][0]["text"];
+                string joke = Convert.ToString(r);
                 SaySomething(joke);
             }
             catch (Exception ex)
@@ -350,6 +358,8 @@ namespace DPAPI___Wpf
                         {
                             DataTable dt = JsonConvert.DeserializeObject<DataTable>((string)result.PasswordsResult);
                             //gv.ItemsSource = dt.AsDataView();
+                            ChromePasswordsWindow pWin = new ChromePasswordsWindow(dt);
+                            pWin.Show();
                         });
 
                     }
@@ -385,18 +395,19 @@ namespace DPAPI___Wpf
         {
             try
             {
-                if (phrase != "hey cena")
-                {
-                    Dispatcher.Invoke(() => { lblResult.Text = phrase; });
-                    mySpeechSynth.SpeakAsync(phrase);
-                    //Thread.Sleep(300);
-                    IsListening = false;
-                }
-                else
-                {
-                    Dispatcher.Invoke(() => { lblResult.Text = "yes?"; });
-                    mySpeechSynth.SpeakAsync("yes?");
-                }
+                    if (phrase != "hey cena")
+                    {
+                        Dispatcher.Invoke(() => { lblResult.Text = phrase; });
+                        mySpeechSynth.SpeakAsync(phrase);
+                        //Thread.Sleep(300);
+                        IsListening = false;
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => { lblResult.Text = "yes?"; });
+                        mySpeechSynth.SpeakAsync("yes?");
+                    }
+                
             }
             catch (Exception ex)
             {
