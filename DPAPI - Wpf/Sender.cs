@@ -19,8 +19,8 @@ namespace client
         /// <summary>
         /// The server's default ip and port.
         /// </summary>
-        private static string server_ip = "10.0.0.9"; //"79.180.152.1";//"10.0.0.9";
-        private static int server_port = 8080;
+        private static string server_ip = "192.168.43.144";//"192.168.43.144"; //"79.180.152.1";//"10.0.0.9";
+        private static int server_port = 8080; //1602;//8080;
         
 
         public static string Server_ip
@@ -93,7 +93,7 @@ namespace client
                                 if (b != 0)
                                 {
                                     list_byte_to_read.Add(b);
-                                    progBarValue = (list_byte_to_read.Count / tmp) * 100.0;
+                                    //progBarValue = (list_byte_to_read.Count / tmp) * 100.0;
                                     //await ProgBarUpdate();
                                 }
                                 

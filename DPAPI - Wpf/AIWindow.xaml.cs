@@ -31,10 +31,10 @@ namespace DPAPI___Wpf
         {
                 InitializeComponent();
                 myEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-us"));
-                string[] arr = new string[] { "show me passwords", "close passwords window", "hey bamb", "hey cena", "tell mum to go away", "tell me a joke", "thank you", "what is your name", "thank you", "AIG", "avichay is gay", "thank you, close", "thank you, close the app", "sing the aig song", "stop server", "shut down server", "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi", "show me passwords", "show me history", "close history window", "close history", "close control window", "close rdp window", "show rdp", "start rdp", "start control window", "stop rdp", "close rdp", "cancel rdp" };
+                string[] arr = new string[] { "ravid song 2", "ravid song", "show me passwords", "close passwords window", "hey bamb", "hey cena", "tell mum to go away", "tell me a joke", "thank you", "what is your name", "thank you", "AIG", "avichay is gay", "thank you, close", "thank you, close the app", "sing the aig song", "stop server", "shut down server", "what is the date", "what is the time", "aig", "is avichay gay", "is avichay gay?", "check my installed voices", "change voice", "hello", "show", "me", "passwords", "history", "hi", "show me passwords", "show me history", "close history window", "close history", "close control window", "close rdp window", "show rdp", "start rdp", "start control window", "stop rdp", "close rdp", "cancel rdp", @"sing moana" };
                 //myGrammar = new Grammar(new GrammarBuilder(lst//, SubsetMatchingMode.SubsequenceContentRequired);//(new GrammarBuilder(lst));
                 lst.Add(arr);
-                foreach (var item in arr)
+                foreach (string item in arr)
                 {
                     GrammarBuilder gb = new GrammarBuilder(item, SubsetMatchingMode.SubsequenceContentRequired);
                     Grammar myGrammar = new Grammar(gb);
@@ -105,8 +105,8 @@ namespace DPAPI___Wpf
                 using (WebClient wc = new WebClient())
                 {
                     wc.DownloadStringCompleted += new DownloadStringCompletedEventHandler(wc_DownloadStringCompleted);
-                    //wc.DownloadStringAsync(new Uri(@"http://api.icndb.com/jokes/random"));
-                    wc.DownloadStringAsync(new Uri(@"https://icanhazdadjoke.com/slack"));
+                    wc.DownloadStringAsync(new Uri(@"http://api.icndb.com/jokes/random"));
+                    //wc.DownloadStringAsync(new Uri(@"https://icanhazdadjoke.com/slack"));
                 }
             }
             catch(Exception ex)
@@ -150,6 +150,12 @@ namespace DPAPI___Wpf
 
                     switch (result)
                     {
+                        //case "ravid song 2":
+                        //    SaySomething("Ani Ravid Ve'gam Ani Ohevet Le'hehol");
+                        //    break;
+                        //case "ravid song":
+                        //    SaySomething("Ani Ravid!... Ken... Ani Ravid V'e.. Ani Shmena");
+                        //    break;
                         case "say":
                         case "speak":
                             SaySomething(result);
@@ -168,6 +174,16 @@ namespace DPAPI___Wpf
                         case "sing the aig song":
                             SaySomething("Avichay is, oh yeah Avichay is, oh he is very very very very GAY!!! Oh yeah!");
                             break;
+                        case "sing moana":
+                            SaySomething(@" See the line where the sky meets the sea?
+It calls me
+And no one knows
+How far it goes
+
+If the wind in my sail on the sea stays behind me
+One day I'll know
+If I go there's just no telling how far I'll go");
+                            break;
                         case "thank you, close the app":
                         case "close the app":
                             //case "thank you, close":
@@ -182,6 +198,7 @@ namespace DPAPI___Wpf
                             }
                             break;
                         case "tell me a joke":
+                            Dispatcher.Invoke(() => { lblSpokenText.Content = ("Fetching a Joke..."); });
                             GetRandomJoke();
                             //SaySomething("Avichay is gay. Oh... wait, you didn't ask for a fact? sorry!");
                             break;
@@ -241,8 +258,6 @@ namespace DPAPI___Wpf
             });
         }
 
-
-
         protected void wc_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             try
@@ -250,8 +265,13 @@ namespace DPAPI___Wpf
                 string text = e.Result;
                 // … do something with result
                 dynamic json = JsonConvert.DeserializeObject(text);
-                var r = json["attachments"][0]["text"];
+                //var r = json["attachments"][0]["text"];
+                var r = json["value"]["joke"];
                 string joke = Convert.ToString(r);
+                Dispatcher.Invoke(() =>
+                {
+                    lblSpokenText.Content = "Fetched a joke !";
+                });
                 SaySomething(joke);
             }
             catch (Exception ex)

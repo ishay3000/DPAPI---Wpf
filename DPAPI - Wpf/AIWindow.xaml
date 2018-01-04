@@ -14,7 +14,7 @@
         </Label>-->
         <TextBlock x:Name="lblResult"  Visibility="Visible" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="115,320,116.6,10.2" FontSize="24" FontWeight="Bold" Foreground="Black" FontFamily="Segoe UI Black"></TextBlock>
 
-        <Label x:Name="lblSpokenText" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="54" Margin="315,112,0,0" VerticalAlignment="Top" Width="259" FontSize="22" FontWeight="Bold">
+        <Label x:Name="lblSpokenText" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="75" Margin="163,85,0,0" VerticalAlignment="Top" Width="518" FontSize="22" FontWeight="Bold">
             <Label.Content>
                 <AccessText TextWrapping="Wrap"></AccessText>
             </Label.Content>
